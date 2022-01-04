@@ -5,12 +5,12 @@ const verifyToken = async (req, res, next) => {
     if (bearerHeader !== undefined) {
         const token = bearerHeader.split(' ')[1]
         try {
-          const decode = jwt.verify(token, process.env.SIGNED_SECRET)
-            next()   
+            jwt.verify(token, process.env.SIGNED_SECRET)
+            next() 
         } catch (error) {
            res.status(403).json({
                error: true,
-               message: 'Invalid authorization token'
+               message: 'Invalid token'
            }) 
         }
     } else {

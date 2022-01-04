@@ -2,8 +2,13 @@ const User = require('../models/userModel')
 const {
     translateError
 } = require("../utilities/mongo_helper");
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
 const saltRounds = 15
+
+const checkEmailOrUsername = async ({emailOrUsername}) => {
+    const foundUser = (await User.findOne({email: emailOrUsername})) || (await User.findOne({username: emailOrUsername}));
+    return foundUser   
+}
 
 const createUser = async ({
     username,
@@ -26,37 +31,30 @@ const createUser = async ({
     }
 }
 
-const userLogin = async ({username, password})=>{
+const userLogin = async ({emailOrUsername, password})=>{
     try {
-        const foundUser = await User.findOne({username})
-
+        const foundUser = await checkEmailOrUsername({emailOrUsername})
         if(foundUser){
             if(await bcrypt.compare(password, foundUser.password)){
                 return [true, foundUser]
             }
-            return [false, 'Incorrect Password']
+            return [false, 'Incorrect email or password']
         } else {
-            return [false, 'Account not found']
+            return [false, 'Incorrect email or password']
         }
     } catch (error) {
-        return [false, translateError(error)]
+        return [false, translateError(error)] 
     }
 }
 
-const sendAnonMessage = async({receiverUsername, message})=>{
-    try {
-      const result = await User.updateOne({ username: receiverUsername }, { $push: { anonMessages: message } }); 
-      if(result.acknowledged){
-          return [true, '']
-      }
-    } catch (error) {
-       return [false, translateError(error)] 
-    }
-    
-    
+const updatePassword = async(password, id)=>{
+    const hash = await bcrypt.hash(password, saltRounds)
+    return await User.findOneAndUpdate({id}, {password: hash}, {new: true})
 }
+
 module.exports = {
     createUser,
     userLogin,
-    sendAnonMessage
+    checkEmailOrUsername,
+    updatePassword,
 }

@@ -14,7 +14,13 @@ const userSchema = new mongoose.Schema({
         type: Array
     },
     email: {
-        type: String
+        type: String,
+        required: true,
+        unique: true
+    },
+    isReceivingMessages: {
+        type: Boolean,
+        default: true
     }
 },
 { timestamps: true }

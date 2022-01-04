@@ -2,12 +2,16 @@ const router = require('express').Router()
 const {
     signUp,
     login,
-    sendMessage
+    forgotPassword,
+    resetPassword,
+    changePassword,
 } = require('../controllers/userController')
 const { verifyToken } = require('../utilities/verifyToken')
 
 router.post('/sign-up', signUp)
 router.post('/login', login)
-router.put('/message', verifyToken, sendMessage)
+router.post('/forgot-password', forgotPassword)
+router.put('/reset-password', resetPassword)
+router.put('/change-password',verifyToken, changePassword)
 
 module.exports = router

@@ -1,11 +1,24 @@
 const Joi = require('joi');
 
-// Event registration validation rules
 const userValidation = async (field) => {
   const schema = Joi.object({
     username: Joi.string().required(),
     password: Joi.string().required(),
-    email: Joi.string()
+    email: Joi.string().required()
+  });
+
+  try {
+    return await schema.validateAsync(field, {
+      abortEarly: false
+    });
+  } catch (err) {
+    return err;
+  }
+};
+const userLoginValidation = async (field) => {
+  const schema = Joi.object({
+    emailOrUsername: Joi.string().required(),
+    password: Joi.string().required()
   });
 
   try {
@@ -18,7 +31,7 @@ const userValidation = async (field) => {
 };
 const messageValidation = async (field) => {
   const schema = Joi.object({
-    receiverUsername: Joi.string().required(),
+    emailOrUsername: Joi.string().required(),
     message: Joi.string().required()
   });
 
@@ -30,8 +43,57 @@ const messageValidation = async (field) => {
     return err;
   }
 };
+const resetPasswordValidation = async (field) => {
+  const schema = Joi.object({
+    password: Joi.string().required(),
+    confirmPassword: Joi.ref('password'),
+    id: Joi.string().required()
+  });
+
+  try {
+    return await schema.validateAsync(field, {
+      abortEarly: false
+    });
+  } catch (err) {
+    return err;
+  }
+};
+
+const forgotPasswordValidation = async (field) => {
+  const schema = Joi.object({
+    emailOrUsername: Joi.string().required()
+  });
+
+  try {
+    return await schema.validateAsync(field, {
+      abortEarly: false
+    });
+  } catch (err) {
+    return err;
+  }
+};
+
+const getMessagesValidation = async (field) => {
+  const schema = Joi.object({
+    id: Joi.string().required()
+  });
+
+  try {
+    return await schema.validateAsync(field, {
+      abortEarly: false
+    });
+  } catch (err) {
+    return err;
+  }
+};
+
+
 
 module.exports = {
   userValidation,
   messageValidation,
+  resetPasswordValidation,
+  forgotPasswordValidation,
+  userLoginValidation,
+  getMessagesValidation
 };
