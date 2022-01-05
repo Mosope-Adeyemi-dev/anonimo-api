@@ -71,10 +71,8 @@ const createMail = async (type, username, id, email) => {
   }
   try {
     const info = await transporter.sendMail(message);
-    console.log(info);
     return "success";
   } catch (error) {
-    console.log(error);
     return "failed";
   }
 };

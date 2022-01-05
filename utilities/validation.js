@@ -87,7 +87,20 @@ const getMessagesValidation = async (field) => {
   }
 };
 
+const messageStatusValidation = async (field) => {
+  const schema = Joi.object({
+    status: Joi.boolean().required(),
+    id: Joi.string().required()
+  });
 
+  try {
+    return await schema.validateAsync(field, {
+      abortEarly: false
+    });
+  } catch (err) {
+    return err;
+  }
+};
 
 module.exports = {
   userValidation,
@@ -95,5 +108,6 @@ module.exports = {
   resetPasswordValidation,
   forgotPasswordValidation,
   userLoginValidation,
-  getMessagesValidation
+  getMessagesValidation,
+  messageStatusValidation
 };
