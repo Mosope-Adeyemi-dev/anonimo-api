@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     anonMessages: {
         type: Array
     },
+    topic: { type: String },
     email: {
         type: String,
         required: true,

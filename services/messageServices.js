@@ -3,8 +3,7 @@ const {
     translateError
 } = require("../utilities/mongo_helper");
 const crypto = require('crypto');
-const {encrypt, decrypt } = require('../utilities/encDec')
-const { findById } = require('../models/userModel');
+const { encrypt } = require('../utilities/encDec')
 
 const sendAnonMessage = async({emailOrUsername, message})=>{
 
@@ -46,9 +45,20 @@ const getMessages =  async({id})=>{
        return [false, translateError(error)] 
     }
 }
+const setCurrentTopic = async ({topic, id}) => {
+    try {
+        const result = await User.findByIdAndUpdate(id, {topic}, {new: true})
+        if(result){
+          return [true, 'Topic succesfully set']  
+        } 
+    } catch (error) {
+        return [false, translateError(error)]
+    }
+}
 
 module.exports = {
     sendAnonMessage,
     updateMessagingStatus,
-    getMessages
+    getMessages,
+    setCurrentTopic
 }

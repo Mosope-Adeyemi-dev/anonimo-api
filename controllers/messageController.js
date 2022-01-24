@@ -1,7 +1,7 @@
 const User = require('../models/userModel')
 const { responseHandler } = require('../utilities/responseHandler')
-const { sendAnonMessage, updateMessagingStatus, getMessages } = require('../services/messageServices')
-const { messageValidation, getMessagesValidation, messageStatusValidation } = require('../utilities/validation')
+const { sendAnonMessage, updateMessagingStatus, getMessages, setCurrentTopic } = require('../services/messageServices')
+const { messageValidation, getMessagesValidation, messageStatusValidation, topicValidation } = require('../utilities/validation')
 const {encrypt, decrypt } = require('../utilities/encDec')
 const { checkEmailOrUsername } = require('../services/userServices')
 
@@ -70,6 +70,23 @@ const getuserMessages = async(req, res)=>{
 
         return  responseHandler(res, 'message succesfully sent', 200, messages, false) 
     }
-    return responseHandler(res, check[1], 403, '', true)
+    return responseHandler(res, check[1], 400, '', true)
 }
-module.exports = {sendMessage, messagingStatus, getuserMessages}
+
+const setTopic = async(req, res) => {
+    const { details } = await topicValidation(req.body)
+
+    if(details){
+        const allErrors = details.map((detail) => detail.message.replace(/"/g, ""));
+        return  responseHandler(res, allErrors, 400, '', true)
+    }
+    
+    const check = await setCurrentTopic(req.body)
+
+    if(check[0]){
+        return  responseHandler(res, check[1], 200, '', false) 
+    }
+    
+    return responseHandler(res, check[1], 400, '', true)
+}
+module.exports = {sendMessage, messagingStatus, getuserMessages, setTopic}
